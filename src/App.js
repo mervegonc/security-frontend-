@@ -1,21 +1,25 @@
-
 import React, { useState } from 'react';
 
 function App() {
-  const [user, setUser] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [response, setResponse] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const url = 'http://localhost:8080/get?user=' + user;
+      const url = 'http://localhost:8080/login';
 
       const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         headers: {
-          'Authorization': 'Basic ' + btoa('learn:password')
-        }
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
       });
 
       if (!response.ok) {
@@ -23,7 +27,7 @@ function App() {
       }
 
       const data = await response.text();
-setResponse(data);
+      setResponse(data);
 
     } catch (error) {
       console.error('Fetch error:', error.message);
@@ -34,10 +38,16 @@ setResponse(data);
     <div>
       <form onSubmit={handleSubmit}>
         <label>
-          User:
-          <input type="text" value={user} onChange={(e) => setUser(e.target.value)} />
+          Username:
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
-        <button type="send">Send</button>
+        <br />
+        <label>
+          Password:
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        </label>
+        <br />
+        <button type="submit">Login</button>
       </form>
       <div>
         Response: {response}
